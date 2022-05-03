@@ -1,4 +1,4 @@
-import {addDays, subDays} from "date-fns";
+import { addDays, isWeekend, nextMonday, subDays } from 'date-fns';
 
 const getOrthodoxEaster = (year: number): Date => {
     let oed: Date;
@@ -32,7 +32,13 @@ export const getHolidays = (year: number): Date[] => {
     holidays.push(new Date(year, 2, 25));
     holidays.push(subDays(easter, 2));
     holidays.push(addDays(easter, 1));
-    holidays.push(new Date(year, 4, 1));
+    // Check if 1st May is moved
+    const firstMay = new Date(year, 4, 1);
+    if (isWeekend(firstMay)) {
+        holidays.push(nextMonday(firstMay));
+    } else {
+        holidays.push(firstMay);
+    }
     holidays.push(addDays(easter, 50));
     holidays.push(new Date(year, 7, 15));
     holidays.push(new Date(year, 9, 28));

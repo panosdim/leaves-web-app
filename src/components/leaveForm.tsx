@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as Realm from 'realm-web';
 import { LeaveEntity } from '../model';
-import { CLUSTER_NAME, COLLECTION_NAME, DATABASE_NAME, DB_DATE_FORMAT } from '../utils';
+import { calculateWorkingDays, CLUSTER_NAME, COLLECTION_NAME, DATABASE_NAME, DB_DATE_FORMAT } from '../utils';
 
 const {
     BSON: { ObjectId },
@@ -33,8 +33,8 @@ interface Props {
 }
 
 type LeaveFormType = {
-    from: Date;
-    until: Date;
+    from: Date | null;
+    until: Date | null;
     days: number;
 };
 
@@ -51,6 +51,7 @@ export function LeaveForm(props: Props) {
         formState: { errors },
         setValue,
         reset,
+        watch,
         clearErrors,
         handleSubmit,
     } = useForm<LeaveFormType>();
@@ -63,8 +64,8 @@ export function LeaveForm(props: Props) {
                 setValue('until', parse(leaveItem.until, DB_DATE_FORMAT, new Date()));
                 setValue('days', leaveItem.days);
             } else {
-                setValue('from', new Date());
-                setValue('until', new Date());
+                setValue('from', null);
+                setValue('until', null);
                 setValue('days', 0);
             }
         }
@@ -74,16 +75,18 @@ export function LeaveForm(props: Props) {
     const onSubmit = (data: LeaveFormType) => {
         let objectToStore: Partial<LeaveEntity> = {};
 
-        setIsSubmitting(true);
-        // Check if we add a new object or update an existing
-        if (leaveItem) {
+        if (data.from && data.until) {
             objectToStore = {
                 year: selectedYear,
                 from: format(data.from, DB_DATE_FORMAT),
                 until: format(data.until, DB_DATE_FORMAT),
-                days: data.days,
+                days: calculateWorkingDays(data.from, data.until),
             };
+        }
 
+        setIsSubmitting(true);
+        // Check if we add a new object or update an existing
+        if (leaveItem) {
             items
                 .updateOne({ _id: new ObjectId(leaveItem._id) }, { $set: objectToStore })
                 .then(() => {
@@ -97,13 +100,7 @@ export function LeaveForm(props: Props) {
                     console.error(`Failed to update item: ${err}`);
                 });
         } else {
-            objectToStore = {
-                year: selectedYear,
-                from: format(data.from, DB_DATE_FORMAT),
-                until: format(data.until, DB_DATE_FORMAT),
-                days: data.days,
-                owner_id: user.id,
-            };
+            objectToStore.owner_id = user.id;
 
             items
                 .insertOne(objectToStore)
@@ -131,10 +128,13 @@ export function LeaveForm(props: Props) {
         }
     };
 
+    const fromDate = watch('from');
+    const untilDate = watch('until');
+
     return (
         <Dialog
             fullWidth
-            maxWidth={'sm'}
+            maxWidth={'xs'}
             onClose={(_event, reason) => {
                 if (reason !== 'backdropClick') {
                     onClose();
@@ -170,12 +170,16 @@ export function LeaveForm(props: Props) {
                                 <DatePicker
                                     {...field}
                                     label='From'
+                                    maxDate={untilDate}
+                                    disableMaskedInput={true}
                                     inputFormat='dd-MM-yyyy'
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
                                             id='from'
                                             fullWidth
+                                            size='small'
+                                            margin='dense'
                                             error={!!errors.from}
                                             helperText={errors?.from?.message}
                                         />
@@ -194,12 +198,16 @@ export function LeaveForm(props: Props) {
                                 <DatePicker
                                     {...field}
                                     label='Until'
+                                    minDate={fromDate}
+                                    disableMaskedInput={true}
                                     inputFormat='dd-MM-yyyy'
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
                                             id='until'
                                             fullWidth
+                                            size='small'
+                                            margin='dense'
                                             error={!!errors.until}
                                             helperText={errors?.until?.message}
                                         />
@@ -217,6 +225,7 @@ export function LeaveForm(props: Props) {
                                     id='days'
                                     label='Annual Leave Days'
                                     fullWidth
+                                    value={calculateWorkingDays(fromDate, untilDate)}
                                     variant='outlined'
                                     size='small'
                                     margin='dense'

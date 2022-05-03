@@ -56,10 +56,15 @@ export function Leaves({ user }: LeavesProps) {
                 spacing={3}
                 justifyContent='space-around'
             >
-                <Grid item xs={3}>
-                    <UserInfo user={user} selectedYear={selectedYear} onSelectedYearChange={onSelectedYearChange} />
+                <Grid item xs={4}>
+                    <UserInfo
+                        user={user}
+                        refresh={refresh}
+                        selectedYear={selectedYear}
+                        onSelectedYearChange={onSelectedYearChange}
+                    />
                 </Grid>
-                <Grid item xs={9}>
+                <Grid item xs={8}>
                     <Stack spacing={2}>
                         <LeavesTable
                             user={user}

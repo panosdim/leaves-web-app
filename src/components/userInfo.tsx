@@ -19,9 +19,10 @@ const currentYear = new Date().getFullYear();
 type LeavesProps = {
     user: Realm.User;
     selectedYear: number;
+    refresh: boolean;
     onSelectedYearChange: (year: number) => void;
 };
-export function UserInfo({ user, selectedYear, onSelectedYearChange }: LeavesProps) {
+export function UserInfo({ user, selectedYear, refresh, onSelectedYearChange }: LeavesProps) {
     const [yearsOptions, setYearsOptions] = useState<number[]>([]);
     const [takenLeaves, setTakenLeaves] = useState<number>(0);
     const mongo = user.mongoClient(CLUSTER_NAME);
@@ -55,7 +56,7 @@ export function UserInfo({ user, selectedYear, onSelectedYearChange }: LeavesPro
             });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedYear]);
+    }, [selectedYear, refresh]);
 
     React.useEffect(() => {
         items.aggregate([{ $group: { _id: '$year' } }]).then((docs: YearsResults[]) => {
