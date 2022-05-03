@@ -10,15 +10,24 @@ import {
     LinearProgress,
     TextField,
 } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { red } from '@mui/material/colors';
+import { DatePicker, LocalizationProvider, PickersDay, PickersDayProps } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format, parse } from 'date-fns';
+import { format, getYear, isSameDay, isWeekend, parse } from 'date-fns';
+import enLocale from 'date-fns/locale/en-US';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as Realm from 'realm-web';
 import { LeaveEntity } from '../model';
-import { calculateWorkingDays, CLUSTER_NAME, COLLECTION_NAME, DATABASE_NAME, DB_DATE_FORMAT } from '../utils';
+import {
+    calculateWorkingDays,
+    CLUSTER_NAME,
+    COLLECTION_NAME,
+    DATABASE_NAME,
+    DB_DATE_FORMAT,
+    getHolidays,
+} from '../utils';
 
 const {
     BSON: { ObjectId },
@@ -45,6 +54,10 @@ export function LeaveForm(props: Props) {
 
     const mongo = user.mongoClient(CLUSTER_NAME);
     const items = mongo.db(DATABASE_NAME).collection(COLLECTION_NAME);
+
+    if (enLocale.options) {
+        enLocale.options.weekStartsOn = 1;
+    }
 
     const {
         control,
@@ -131,6 +144,21 @@ export function LeaveForm(props: Props) {
     const fromDate = watch('from');
     const untilDate = watch('until');
 
+    const holidayRender = (
+        day: Date | null,
+        _value: Array<Date | null>,
+        DayComponentProps: PickersDayProps<Date | null>,
+    ) => {
+        if (day) {
+            const holidays = getHolidays(getYear(day));
+            const isHoliday = holidays.some((holiday) => isSameDay(holiday, day));
+            if (isHoliday) {
+                return <PickersDay sx={{ color: red[500] }} {...DayComponentProps} />;
+            }
+        }
+        return <PickersDay {...DayComponentProps} />;
+    };
+
     return (
         <Dialog
             fullWidth
@@ -158,7 +186,7 @@ export function LeaveForm(props: Props) {
                 </IconButton>
             </DialogTitle>
             <DialogContent dividers>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <LocalizationProvider dateAdapter={AdapterDateFns} locale={enLocale}>
                     <form id='leave-form' onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
                         <Controller
                             name='from'
@@ -171,8 +199,10 @@ export function LeaveForm(props: Props) {
                                     {...field}
                                     label='From'
                                     maxDate={untilDate}
-                                    disableMaskedInput={true}
                                     inputFormat='dd-MM-yyyy'
+                                    mask='__-__-____'
+                                    shouldDisableDate={(date) => (date ? isWeekend(date) : false)}
+                                    renderDay={holidayRender}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
@@ -199,8 +229,10 @@ export function LeaveForm(props: Props) {
                                     {...field}
                                     label='Until'
                                     minDate={fromDate}
-                                    disableMaskedInput={true}
                                     inputFormat='dd-MM-yyyy'
+                                    mask='__-__-____'
+                                    shouldDisableDate={(date) => (date ? isWeekend(date) : false)}
+                                    renderDay={holidayRender}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
