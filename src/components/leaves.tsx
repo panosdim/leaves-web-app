@@ -1,23 +1,52 @@
-import { Grid, Stack, TextField } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import AddIcon from '@mui/icons-material/Add';
+import { Fab, Grid, Stack } from '@mui/material';
 import React, { useState } from 'react';
 import * as Realm from 'realm-web';
 import { LeavesTable, UserInfo } from '.';
+import { LeaveEntity } from '../model';
+import { LeaveForm } from './leaveForm';
 
 type LeavesProps = {
     user: Realm.User;
 };
 export function Leaves({ user }: LeavesProps) {
     const [selectedYear, setSelectedYear] = useState(-1);
-    const [value, setValue] = React.useState<Date | null>(null);
+    const [refresh, setRefresh] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<LeaveEntity | undefined>();
+    const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
 
     const onSelectedYearChange = (year: number) => {
         setSelectedYear(year);
     };
 
+    const onClose = () => {
+        setRefresh(!refresh);
+        setSelectedItem(undefined);
+        setIsLeaveModalOpen(false);
+    };
+
+    const createNewLeave = () => {
+        setSelectedItem(undefined);
+        setIsLeaveModalOpen(true);
+    };
+
+    const onSelectedRowChanged = (item: LeaveEntity | undefined) => {
+        setSelectedItem(item);
+        setIsLeaveModalOpen(true);
+    };
+
     return (
         <>
+            <Fab
+                sx={{ position: 'absolute', bottom: 16, right: 16 }}
+                variant='extended'
+                color='primary'
+                onClick={createNewLeave}
+                aria-label='New Entry'
+            >
+                <AddIcon sx={{ mr: 1 }} />
+                New Entry
+            </Fab>
             <Grid
                 sx={{
                     width: '100%',
@@ -32,17 +61,19 @@ export function Leaves({ user }: LeavesProps) {
                 </Grid>
                 <Grid item xs={9}>
                     <Stack spacing={2}>
-                        <LeavesTable user={user} selectedYear={selectedYear} />
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DatePicker
-                                label='Basic example'
-                                value={value}
-                                onChange={(newValue) => {
-                                    setValue(newValue);
-                                }}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                        </LocalizationProvider>
+                        <LeavesTable
+                            user={user}
+                            selectedYear={selectedYear}
+                            refresh={refresh}
+                            onSelectionChange={onSelectedRowChanged}
+                        />
+                        <LeaveForm
+                            user={user}
+                            open={isLeaveModalOpen}
+                            selectedYear={selectedYear}
+                            leaveItem={selectedItem}
+                            onClose={onClose}
+                        />
                     </Stack>
                 </Grid>
             </Grid>

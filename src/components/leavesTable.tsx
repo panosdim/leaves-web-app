@@ -10,14 +10,16 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import * as Realm from 'realm-web';
-import { DBResults } from '../model';
-import { CLUSTER_NAME, COLLECTION_NAME, DATABASE_NAME } from '../utils';
+import { DBResults, LeaveEntity } from '../model';
+import { CLUSTER_NAME, COLLECTION_NAME, DATABASE_NAME, toShowDate } from '../utils';
 
 type LeavesTableProps = {
     user: Realm.User;
     selectedYear: number;
+    onSelectionChange: (item: LeaveEntity | undefined) => void;
+    refresh: boolean;
 };
-export function LeavesTable({ user, selectedYear }: LeavesTableProps) {
+export function LeavesTable({ user, selectedYear, onSelectionChange, refresh }: LeavesTableProps) {
     const [leaves, setLeaves] = useState<DBResults>([]);
     const [selectedRow, setSelectedRow] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -34,11 +36,11 @@ export function LeavesTable({ user, selectedYear }: LeavesTableProps) {
         });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedYear]);
+    }, [selectedYear, refresh]);
 
     const handleClick = (_e: React.MouseEvent<HTMLTableRowElement, MouseEvent>, id: string) => {
         setSelectedRow(id);
-        // onSelectionChange(clicsState.find((item) => item._id.toString() === id));
+        leaves && onSelectionChange(leaves.find((item) => item._id.toString() === id));
     };
 
     return (
@@ -70,9 +72,9 @@ export function LeavesTable({ user, selectedYear }: LeavesTableProps) {
                                     sx={{ cursor: 'pointer', '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component='th' scope='row'>
-                                        {row.from}
+                                        {toShowDate(row.from)}
                                     </TableCell>
-                                    <TableCell>{row.until}</TableCell>
+                                    <TableCell>{toShowDate(row.until)}</TableCell>
                                     <TableCell align='right'>{row.days}</TableCell>
                                 </TableRow>
                             );
