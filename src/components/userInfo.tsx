@@ -20,9 +20,6 @@ import { TakenLeaves, YearsResults } from '../model';
 import { CLUSTER_NAME, COLLECTION_NAME, DATABASE_NAME, LEAVE_MARKS } from '../utils';
 
 const currentYear = new Date().getFullYear();
-const {
-    BSON: { ObjectId },
-} = Realm;
 
 type LeavesProps = {
     user: Realm.User;
