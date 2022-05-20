@@ -1,5 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Fab, Grid, Stack } from '@mui/material';
+import { Box, Fab, Grid, Stack } from '@mui/material';
 import React, { useState } from 'react';
 import * as Realm from 'realm-web';
 import { LeavesTable, UserInfo } from '.';
@@ -37,16 +37,23 @@ export function Leaves({ user }: LeavesProps) {
 
     return (
         <>
-            <Fab
-                sx={{ position: 'absolute', bottom: 16, right: 16 }}
-                variant='extended'
-                color='primary'
-                onClick={createNewLeave}
-                aria-label='New Entry'
-            >
-                <AddIcon sx={{ mr: 1 }} />
-                New Entry
-            </Fab>
+            <Box sx={{ display: 'flex' }}>
+                <Fab
+                    sx={{
+                        position: { xl: 'absolute', xs: 'block' },
+                        bottom: { xl: 16 },
+                        right: { xl: 16 },
+                        margin: { xs: '0 auto' },
+                    }}
+                    variant='extended'
+                    color='primary'
+                    onClick={createNewLeave}
+                    aria-label='New Entry'
+                >
+                    <AddIcon sx={{ mr: 1 }} />
+                    New Entry
+                </Fab>
+            </Box>
             <Grid
                 sx={{
                     width: '100%',
