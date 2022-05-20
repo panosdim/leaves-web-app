@@ -56,7 +56,7 @@ export function Leaves({ user }: LeavesProps) {
                 spacing={3}
                 justifyContent='space-around'
             >
-                <Grid item xs={4}>
+                <Grid item xs={12} lg={4}>
                     <UserInfo
                         user={user}
                         refresh={refresh}
@@ -64,7 +64,7 @@ export function Leaves({ user }: LeavesProps) {
                         onSelectedYearChange={onSelectedYearChange}
                     />
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={12} lg={8}>
                     <Stack spacing={2}>
                         <LeavesTable
                             user={user}
