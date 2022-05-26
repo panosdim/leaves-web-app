@@ -1,5 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Fab, Grid, Stack } from '@mui/material';
+import { Box, Fab, Grid } from '@mui/material';
 import React, { useState } from 'react';
 import * as Realm from 'realm-web';
 import { LeavesTable, UserInfo } from '.';
@@ -54,9 +54,15 @@ export function Leaves({ user }: LeavesProps) {
                     New Entry
                 </Fab>
             </Box>
+            <LeaveForm
+                user={user}
+                open={isLeaveModalOpen}
+                selectedYear={selectedYear}
+                leaveItem={selectedItem}
+                onClose={onClose}
+            />
             <Grid
                 sx={{
-                    width: '100%',
                     padding: 2,
                 }}
                 container
@@ -72,21 +78,12 @@ export function Leaves({ user }: LeavesProps) {
                     />
                 </Grid>
                 <Grid item xs={12} lg={8}>
-                    <Stack spacing={2}>
-                        <LeavesTable
-                            user={user}
-                            selectedYear={selectedYear}
-                            refresh={refresh}
-                            onSelectionChange={onSelectedRowChanged}
-                        />
-                        <LeaveForm
-                            user={user}
-                            open={isLeaveModalOpen}
-                            selectedYear={selectedYear}
-                            leaveItem={selectedItem}
-                            onClose={onClose}
-                        />
-                    </Stack>
+                    <LeavesTable
+                        user={user}
+                        selectedYear={selectedYear}
+                        refresh={refresh}
+                        onSelectionChange={onSelectedRowChanged}
+                    />
                 </Grid>
             </Grid>
         </>

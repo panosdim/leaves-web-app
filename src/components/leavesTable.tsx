@@ -45,7 +45,7 @@ export function LeavesTable({ user, selectedYear, onSelectionChange, refresh }: 
 
     return (
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+            <Table sx={{ minWidth: { xl: 650 }}} aria-label='simple table'>
                 <TableHead>
                     <TableRow>
                         <TableCell>From</TableCell>
