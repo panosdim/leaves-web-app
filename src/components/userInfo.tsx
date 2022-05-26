@@ -61,7 +61,7 @@ export function UserInfo({ user, selectedYear, refresh, onSelectedYearChange }: 
 
     React.useEffect(() => {
         user.refreshCustomData();
-        setTotalLeaves(user.customData.total_leaves as number);
+        setTotalLeaves(Number(user.customData.total_leaves));
 
         items.aggregate([{ $group: { _id: '$year' } }]).then((docs: YearsResults[]) => {
             const years = docs.map((item) => item._id);
