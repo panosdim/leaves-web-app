@@ -1,46 +1,22 @@
-# Getting Started with Create React App
+# Annual Leaves
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Keep track of your annual leaves. It uses a MongoDB as backend.
 
-## Available Scripts
+## Screenshots
 
-In the project directory, you can run:
+![Login](https://github.com/panosdim/leaves-web-app/assets/10371312/d5254b66-dfcd-455c-a018-1eed6cd3df03)
+![Main](https://github.com/panosdim/leaves-web-app/assets/10371312/33b24128-b1d6-494a-bbc1-71e1618e4e5f)
+![Add Entry](https://github.com/panosdim/leaves-web-app/assets/10371312/8778907f-ee21-4589-be26-08b913921ce3)
 
-### `npm start`
+## Build
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+In order to build the project you need [VS Code](https://code.visualstudio.com/).
+Clone the repository and open the folder with VS Code.
+Then you can run the project with `npm start` or build with `npm build`.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Libraries Used
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+-   [ReactJS](https://reactjs.org/) used for the front end.
+-   [Material UI](https://mui.com/) used for the front end UI.
+-   [date-fns](https://date-fns.org/) used date functions.
+-   [Realm Web](https://www.mongodb.com/docs/realm/web/) used for MongoDB communication.
