@@ -20,7 +20,7 @@ export const calculateWorkingDays = (start: Date | null, end: Date | null): numb
     } else {
         holidays = getHolidays(start.getFullYear());
         const nextYearHolidays = getHolidays(end.getFullYear());
-        holidays.concat(nextYearHolidays);
+        holidays = holidays.concat(nextYearHolidays);
     }
 
     const isHoliday = (date: Date): boolean => holidays.some((holiday) => isSameDay(date, holiday));
